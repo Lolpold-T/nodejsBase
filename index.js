@@ -5,13 +5,22 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:4000",
   },
 });
 
+const middleware = require("./middleware/index.js");
+// app.use(middleware.decodeToken);
+
+const users_routes = require("./routes/users.js");
+const sessions_routes = require("./routes/sessions.js");
+
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.status(200).send("You are connected");
 });
+app.use(express.json());
+app.use("/api/users", users_routes);
+app.use("/api/sessions", sessions_routes);
 
 io.on("connection", (socket) => {
   const connections = [];
@@ -19,12 +28,12 @@ io.on("connection", (socket) => {
     connections.push({ id });
   }
   console.log(connections);
-  socket.on("chat message", (user) => {
-    io.emit("chat message", user.user + ": " + user.message);
+  socket.on("session", (session) => {
+    io.emit("session", session.name + ": " + session.id);
   });
 
   socket.on("disconnect", (id) => {
-    console.log("user disconnected " + id);
+    console.log("session disconnected " + id);
   });
 });
 
