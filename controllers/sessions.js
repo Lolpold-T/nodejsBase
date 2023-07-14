@@ -25,7 +25,8 @@ const createSession = (req, res) => {
 
 const updateSession = (req, res) => {
   const id = Number(req.params.sessionID);
-  const index = sessions.findIndex((session) => session.id === id);
+  const index = sessions?.findIndex((session) => session.id === id);
+  if (index === -1) return res.status(404).send("User not found");
   const updatedSession = {
     id: sessions[index].id,
     name: req.body.name,
@@ -37,7 +38,8 @@ const updateSession = (req, res) => {
 
 const deleteSession = (req, res) => {
   const id = Number(req.params.sessionID);
-  const index = sessions.findIndex((session) => session.id === id);
+  const index = sessions?.findIndex((session) => session.id === id);
+  if (index === -1) return res.status(404).send("User not found");
   sessions.splice(index, 1);
   res.status(200).json("Session deleted");
 };

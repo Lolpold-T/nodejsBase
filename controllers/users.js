@@ -15,7 +15,6 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  console.log(req.body);
   const newUser = {
     id: users.length + 1,
     name: req.body.name,
@@ -26,7 +25,9 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const id = Number(req.params.userID);
-  const index = users.findIndex((user) => user.id === id);
+  const index = users?.findIndex((user) => user.id === id);
+
+  if (index === -1) return res.status(404).send("User not found");
   const updatedUser = {
     id: users[index].id,
     name: req.body.name,
@@ -38,7 +39,8 @@ const updateUser = (req, res) => {
 
 const deleteUser = (req, res) => {
   const id = Number(req.params.userID);
-  const index = users.findIndex((user) => user.id === id);
+  const index = users?.findIndex((user) => user.id === id);
+  if (index === -1) return res.status(404).send("User not found");
   users.splice(index, 1);
   res.status(200).json("User deleted");
 };
